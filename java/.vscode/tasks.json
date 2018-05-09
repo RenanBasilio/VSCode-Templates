@@ -1,0 +1,71 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Configure",
+            "type": "shell",
+            "windows": {
+                "command": "mkdir -Force build; mkdir -Force target"
+            },
+            "linux": {
+                "command": "mkdir -p build && mkdir -p target"
+            }
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": "Configure",
+            "command": "javac",
+            "args": [
+                "-cp", "build",
+                "-d" , "build",
+                "-verbose",
+                "src/*.java"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build and Run",
+            "type": "shell",
+            "dependsOn": "Build",
+            "command": "java",
+            "args": [
+                "-cp", "build/", "MyApp"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy",
+            "type": "shell",
+            "dependsOn": "Build",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "command": "jar",
+            "args": [
+                "cvfm",
+                "../target/MyApp.jar",
+                "../manifest.mf",
+                "*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "windows": {
+                "command": "rm -Recurse -Force build; rm -Recurse -Force target;"
+            },
+            "linux": {
+                "command": "rm -rf build && rm -rf target"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
